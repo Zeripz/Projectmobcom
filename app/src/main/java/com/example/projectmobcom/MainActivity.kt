@@ -82,6 +82,30 @@ class MainActivity : ComponentActivity() {
                             Text(text = "Youtube")
                         }
                     }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Pencet tombol berikut untuk mengirim email",
+                            modifier = Modifier.weight(1f)
+                        )
+                        Button(onClick = {
+                            val intent =Intent(Intent.ACTION_SEND).apply {
+                                type= "text/plain"
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf("test@mail.com"))
+                                putExtra(Intent.EXTRA_SUBJECT, "This is my subject")
+                                putExtra(Intent.EXTRA_TEXT, "This is my content")
+                            }
+                            if (intent.resolveActivity(packageManager) != null){
+                                startActivity(intent)
+                            }}) {
+                            Text(text = "Send Email")
+                        }
+                    }
+
                     viewModel.uri?.let{
                         AsyncImage(
                             model = viewModel.uri,
@@ -91,7 +115,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         val uri = intent?.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
