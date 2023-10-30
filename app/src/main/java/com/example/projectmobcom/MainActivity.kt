@@ -11,21 +11,19 @@ import androidx.compose.ui.Modifier
 import com.example.projectmobcom.ui.theme.ProjectmobcomTheme
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import androidx.compose.foundation.Canvas
+import android.os.Build
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-
+import coil.compose.AsyncImage
+import android.net.Uri
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by viewModels<ImageViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -84,8 +82,19 @@ class MainActivity : ComponentActivity() {
                             Text(text = "Youtube")
                         }
                     }
+                    viewModel.uri?.let{
+                        AsyncImage(
+                            model = viewModel.uri,
+                            contentDescription = null)
+                    }
                 }
             }
         }
+    }
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val uri = intent?.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        viewModel.updateUri(uri)
     }
 }
